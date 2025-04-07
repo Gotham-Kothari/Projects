@@ -1,10 +1,12 @@
 class Controls{
     constructor(type){
+        //Set movement in all direction false inititally
         this.forward=false;
         this.left=false;
         this.right=false;
         this.reverse=false;
 
+        //Application of movement depending on type of car (except AI)
         switch(type){
             case "KEYS":
                 this.#addKeyboardListeners();
@@ -15,7 +17,7 @@ class Controls{
         }
     }
 
-    #addKeyboardListeners(){
+    #addKeyboardListeners(){ //placing finger on a key
         document.onkeydown=(event)=>{
             switch(event.key){
                 case "ArrowLeft":
@@ -32,7 +34,7 @@ class Controls{
                     break;
             }
         }
-        document.onkeyup=(event)=>{
+        document.onkeyup=(event)=>{ //lifting finger off of the key
             switch(event.key){
                 case "ArrowLeft":
                     this.left=false;
