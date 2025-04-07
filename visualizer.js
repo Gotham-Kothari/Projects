@@ -17,8 +17,13 @@ class Visualizer {
             );
 
             ctx.setLineDash([7, 3]);
-            Visualizer.drawLevel(ctx, network.levels[i], left, levelTop, width, levelHeight, 
-                i == network.levels.length - 1? ['🠉','🠈','🠊','🠋']: [])
+            Visualizer.drawLevel(ctx, 
+                                 network.levels[i], 
+                                 left, 
+                                 levelTop, 
+                                 width, 
+                                 levelHeight, 
+                                 i == network.levels.length - 1? ['🠉','🠈','🠊','🠋']: []);
         }
     }
 
