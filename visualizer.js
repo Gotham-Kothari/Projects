@@ -7,11 +7,12 @@ class Visualizer {
         const width = ctx.canvas.width - margin*2;
         const height = ctx.canvas.height - margin*2;
 
+        //Calculating the height allocated to each layer
         const levelHeight = height/network.levels.length;
         for(let i = network.levels.length - 1; i >= 0; i--) {
             const levelTop = top + lerp(
                 height - levelHeight,
-                0,
+                0,    
                 network.levels.length == 0 ? 0.5 : i/(network.levels.length - 1)
             );
 
@@ -20,7 +21,7 @@ class Visualizer {
                 i == network.levels.length - 1? ['🠉','🠈','🠊','🠋']: [])
         }
     }
-    
+
     static drawLevel(ctx, level, left, top, width, height, outputLabels) {
         //More helper variables
         const right = left + width;
@@ -47,7 +48,7 @@ class Visualizer {
                 ctx.stroke();
             }
         }
-
+        
         for(let i = 0; i < inputs.length; i++) {
             const x = Visualizer.#getNodeX(inputs, i, left, right); //x-coordinate
             //If there is only node, it is centered (0.5). Otherwise, they're all spaced out
