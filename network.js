@@ -19,8 +19,13 @@ class NeuralNetwork {
             givenInputs, 
             network.levels[0]
         );
+        //outputs = activation outputs of the hidden layer
 
-        //Update the outputs by applying forward propagation on every remaining layer/level
+        /*
+        Next, we must update the outputs by applying forward propagation on every remaining layer/level.
+        Previous layer's output becomes the current layer's input.
+        */
+        
         for(let i = 1; i < network.levels.length; i++ ){
             outputs = Level.feedForward(
                 outputs, 
@@ -30,7 +35,8 @@ class NeuralNetwork {
     }
 
     static mutate(network, amount = 1){  
-        network.levels.forEach(level => {
+        network.levels.forEach(level => { //iterates through each level in a network
+            //Mutates the bias by 'amount'
             for(let i = 0; i < level.biases.length; i++) {
                 level.biases[i] = lerp(
                     level.biases[i],
@@ -39,6 +45,7 @@ class NeuralNetwork {
                 );
             }
 
+            //Mutates the weight by 'amount'
             for(let i = 0; i < level.weights.length; i++) {
                 for(let j = 0; j < level.weights[i].length; j++) {
                     level.weights[i][j] = lerp(
