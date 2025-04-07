@@ -1,21 +1,22 @@
 class Car{
     constructor(x,y,width,height,controlType,maxSpeed=3){
-        this.x=x;
-        this.y=y;
-        this.width=width;
-        this.height=height;
+        this.x=x; //x-coordinate of the center of the car
+        this.y=y; //y-coordinate of the center of the car
+        this.width=width; //width of the car
+        this.height=height; //length of the car
 
-        this.speed=0;
-        this.acceleration=0.2;
-        this.maxSpeed=maxSpeed;
-        this.friction=0.05;
-        this.angle=0;
-        this.damaged=false;
+        this.speed=0; //initial speed of the car (default), when no button is pressed
+        this.acceleration=0.2; //acceleration of the car
+        this.maxSpeed=maxSpeed; //maximum speed of the car
+        this.friction=0.05; //friction experienced by the car
+        this.angle=0; //angle with the vertical initially (default; for turning cars)
+        this.damaged=false; //check if the car is damaged
 
-        this.useBrain = controlType == "AI"
+        this.useBrain = controlType == "AI" //implement Neural Network if we use AI to control the car
 
-        if(controlType !="DUMMY"){
-            this.sensor=new Sensor(this);
+        if(controlType !="DUMMY"){ //If car is not a dummy car (dummy car = used to simulate traffic)
+            this.sensor=new Sensor(this); //implement sensors to a car
+            //implement a neural network to the brain of the car
             this.brain = new NeuralNetwork(
                 [this.sensor.rayCount, 6, 4] //[number of input neurons, number of neurons in hidden layer, number of output]
                 //4 ---> 1 for forward, 1 for backward, 1 for left and 1 for right
