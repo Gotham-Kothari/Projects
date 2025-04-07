@@ -1,6 +1,9 @@
 //Defining a Neural Network class, which is practically a collection of layers/levels of neurons
 class NeuralNetwork {
-    constructor(neuronCounts) {
+    /*
+    The following constructor function connects every layer to each other forming: input layer --> hidden layer --> output layer
+    */
+    constructor(neuronCounts) {//neuronCounts = array which consists of [no of neurons in input level, hidden level, output level]
         this.levels = [];
         for(let i = 0; i < neuronCounts.length - 1; i++) {
             this.levels.push(new Level(
@@ -54,16 +57,25 @@ Level class: simulates a fullt connected layer in a neural network
 1. Each input is connected to every output
 2. Each output has a bias
 3. We apply the logic for forward propagation
+
+Following computation is performed on a neural network
+z = w.x + b
+z = w1.x1 + w2.x2 + ..... + b
+
+Applying the above in an activation function (ReLu, Sigmoid, Tanh)
+a = f(z) = f(w.x + b)
 */
 class Level {
     constructor(inputCount, outputCount) {
+        //inputCount = number of inputs
+        //outputCount = number of outputs
         this.inputs = new Array(inputCount); //Input neurons
         this.outputs = new Array(outputCount); //Output neurons
         this.biases = new Array(outputCount); //Initializes biases (thresholds for activation) for each output neuron
 
         this.weights = []; //2D array which will hold weights from each input to each output neuron
         for(let i = 0; i < inputCount; i++) {
-            this.weights[i] = new Array(outputCount); //Initialising empty array
+            this.weights[i] = new Array(outputCount); //Initialising empty array of the same size as the number of outputs
         }
 
         Level.#randomize(this);
@@ -85,7 +97,6 @@ class Level {
 
     //Performs forward propagation: calculates output values from given inputs using weights and biases
     static feedForward(givenInputs, level) {
-
         for(let i = 0; i < level.inputs.length; i++) {
             level.inputs[i] = givenInputs[i];
         } //Stores the given input values into the layer's input neurons
