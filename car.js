@@ -22,15 +22,18 @@ class Car{
                 //4 ---> 1 for forward, 1 for backward, 1 for left and 1 for right
             );
         }
-        this.controls=new Controls(controlType);
+        this.controls=new Controls(controlType); //apply keyboard controls to the car (also depends on the control type)
     }
 
     update(roadBorders,traffic){
+        //if car is not damaged
         if(!this.damaged){
-            this.#move();
-            this.polygon=this.#createPolygon();
-            this.damaged=this.#assessDamage(roadBorders,traffic);
+            this.#move(); //instructs car to move in appropriate direction
+            this.polygon=this.#createPolygon(); //creates car's structure
+            this.damaged=this.#assessDamage(roadBorders,traffic); //assesses damage caused by crash
         }
+
+        //if the sensor exists
         if(this.sensor){
             this.sensor.update(roadBorders,traffic);
             const offsets = this.sensor.readings.map(
@@ -44,7 +47,7 @@ class Car{
             const outputs = NeuralNetwork.feedForward(offsets, this.brain);
             // feedings offsets as givenInputs in forward propagation operation in the NeuralNetwork this.brain
 
-            if(this.useBrain) {
+            if(this.useBrain) { //If we are using AI
                 this.controls.forward = outputs[0];
                 this.controls.left = outputs[1];
                 this.controls.right = outputs[2];
@@ -53,14 +56,15 @@ class Car{
         }
     }
 
+    //Check damage causes either due to traffic or road borders
     #assessDamage(roadBorders,traffic){
         for(let i=0;i<roadBorders.length;i++){
-            if(polysIntersect(this.polygon,roadBorders[i])){
+            if(polysIntersect(this.polygon,roadBorders[i])){ //checks if the car collides with the road
                 return true;
             }
         }
         for(let i=0;i<traffic.length;i++){
-            if(polysIntersect(this.polygon,traffic[i].polygon)){
+            if(polysIntersect(this.polygon,traffic[i].polygon)){ //checks if the car collides with another (dummy car)
                 return true;
             }
         }
@@ -68,21 +72,29 @@ class Car{
     }
 
     #createPolygon(){
-        const points=[];
-        const rad=Math.hypot(this.width,this.height)/2;
-        const alpha=Math.atan2(this.width,this.height);
+        const points=[]; //a polygon here has been defined as a collection points connected by lines
+        const rad=Math.hypot(this.width,this.height)/2; //radius of the car (dist b/w car's centre and a corner; a car is a rectangle)
+        const alpha=Math.atan2(this.width,this.height); //alpha = angle between radius 'rad' and the width
+
+        //Top-right corner
         points.push({
             x:this.x-Math.sin(this.angle-alpha)*rad,
             y:this.y-Math.cos(this.angle-alpha)*rad
         });
+
+        //Top-left corner
         points.push({
             x:this.x-Math.sin(this.angle+alpha)*rad,
             y:this.y-Math.cos(this.angle+alpha)*rad
         });
+
+        //Bottom-left corner
         points.push({
             x:this.x-Math.sin(Math.PI+this.angle-alpha)*rad,
             y:this.y-Math.cos(Math.PI+this.angle-alpha)*rad
         });
+
+        //Bottom-right corner
         points.push({
             x:this.x-Math.sin(Math.PI+this.angle+alpha)*rad,
             y:this.y-Math.cos(Math.PI+this.angle+alpha)*rad
@@ -92,50 +104,61 @@ class Car{
 
     #move(){
         if(this.controls.forward){
-            this.speed+=this.acceleration;
+            this.speed+=this.acceleration; //increase speed in forward direction
         }
         if(this.controls.reverse){
-            this.speed-=this.acceleration;
+            this.speed-=this.acceleration; //increase speed in -ve direction
         }
 
         if(this.speed>this.maxSpeed){
-            this.speed=this.maxSpeed;
+            this.speed=this.maxSpeed; //create a barrier speed (+ve direction)
         }
         if(this.speed<-this.maxSpeed/2){
-            this.speed=-this.maxSpeed/2;
+            this.speed=-this.maxSpeed/2; //create a barrier speed (-ve direction)
         }
 
         if(this.speed>0){
-            this.speed-=this.friction;
+            this.speed-=this.friction; //stop the car by deceleration (when moving forward)
         }
         if(this.speed<0){
-            this.speed+=this.friction;
+            this.speed+=this.friction; //stop the car (when moving backward)
         }
         if(Math.abs(this.speed)<this.friction){
-            this.speed=0;
+            this.speed=0; //when speed is minimal, reduce it 0 instantly
         }
 
-        if(this.speed!=0){
-            const flip=this.speed>0?1:-1;
-            if(this.controls.left){
+        //To allow car to steer, depending on forward/reverse movement
+        if(this.speed!=0)
+            const flip=this.speed>0?1:-1; //define flip; if speed > 0, flip = 1; else, flip = 1
+            if(this.controls.left){ //when pressing left key
+                /*
+                moves counter-clockwise while moving forward
+                moves car clockwise while moving backward
+                */
                 this.angle+=0.03*flip;
             }
-            if(this.controls.right){
+            if(this.controls.right){ //when pressing right key
+                /*
+                moves clockwise while moving forward
+                moves counter-clockwise moving backward
+                */
                 this.angle-=0.03*flip;
             }
         }
 
+        //Car rotates and moves in the angle
         this.x-=Math.sin(this.angle)*this.speed;
         this.y-=Math.cos(this.angle)*this.speed;
     }
 
     draw(ctx,color, drawSensor = false){
         if(this.damaged){
-            ctx.fillStyle="gray";
+            ctx.fillStyle="gray"; //color the car gray if the car gets damaged
         }else{
-            ctx.fillStyle=color;
+            ctx.fillStyle=color; //set the car to a different color, otherwise
         }
         ctx.beginPath();
+        //Draw the car by drawing borders between every adjacent point, and filling the formed polygon
         ctx.moveTo(this.polygon[0].x,this.polygon[0].y);
         for(let i=1;i<this.polygon.length;i++){
             ctx.lineTo(this.polygon[i].x,this.polygon[i].y);
