@@ -1,23 +1,30 @@
-const carCanvas=document.getElementById("carCanvas");
+const carCanvas=document.getElementById("carCanvas"); //carCanvas object
 carCanvas.width=200;
 
-const networkCanvas=document.getElementById("networkCanvas");
+const networkCanvas=document.getElementById("networkCanvas"); //networkCanvas object
 networkCanvas.width=300;
 
-const carCtx = carCanvas.getContext("2d");
-const networkCtx = networkCanvas.getContext("2d");
-const road=new Road(carCanvas.width/2,carCanvas.width*0.9);
-const cars = generateCars(1000);
+const carCtx = carCanvas.getContext("2d"); //car context ---> drawing space + tools
+const networkCtx = networkCanvas.getContext("2d"); // network context
+const road=new Road(carCanvas.width/2,carCanvas.width*0.9); //road object
+const cars = generateCars(1000); //all initially superimposed cars
 
-let bestCar = cars[0];
-if(localStorage.getItem("bestBrain")){
-    for(let i = 0; i < cars.length; i++) {
+let bestCar = cars[0]; //obtain the best car out of all superimposed cars
+if(localStorage.getItem("bestBrain")){ //checks if local storage contains bestBrain item
+    for(let i = 0; i < cars.length; i++) { //loop through all superimposed cars
         cars[i].brain = JSON.parse(
-            localStorage.getItem("bestBrain"));
+            localStorage.getItem("bestBrain")); 
+        /*
+        takes the saved "bestBrain" from localStorage, 
+        parses the JSON string into a JavaScript object, 
+        and assigns it as the neural brain of each car
+        */
+        //every car uses the previously saved best-performing brain
 
         if(i!=0) {
             NeuralNetwork.mutate(cars[i].brain, 0);
         }
+        //
     } 
 }
 
