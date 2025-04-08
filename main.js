@@ -24,7 +24,7 @@ if(localStorage.getItem("bestBrain")){ //checks if local storage contains bestBr
         if(i!=0) {
             NeuralNetwork.mutate(cars[i].brain, 0);
         }
-        //
+        //if i != 0, cars are subject to mutation by amount = 0
     } 
 }
 
@@ -45,11 +45,15 @@ function save() {
     localStorage.setItem("bestBrain",
         JSON.stringify(bestCar.brain)
     )
-}
+} 
+/*
+Saves the current best-performing car's neural network 
+(bestCar.brain) to the browser's localStorage under the key bestBrain
+*/
 
 function discard() {
     localStorage.removeItem("bestBrain");
-}
+} //Deletes the "bestBrain" entry from localStorage
 
 //generates cars ---> used later in traffic generation
 function generateCars(N) {
@@ -72,7 +76,7 @@ function animate(time){
 
     const bestCar = cars.find(
         c=>c.y == Math.min(...cars.map(c=>c.y))
-    );
+    ); //obtains bestCar by finding car with minimum y value
 
     carCanvas.height=window.innerHeight;
     networkCanvas.height=window.innerHeight;
