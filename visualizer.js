@@ -7,14 +7,12 @@ class Visualizer {
         const width = ctx.canvas.width - margin*2;
         const height = ctx.canvas.height - margin*2;
 
-        //Calculating the height allocated to each layer
-        const levelHeight = height/network.levels.length;
+        const levelHeight = height/network.levels.length; //Calculating the height allocated to each layer
         for(let i = network.levels.length - 1; i >= 0; i--) {
             const levelTop = top + lerp(
                 height - levelHeight,
                 0,    
-                network.levels.length == 0 ? 0.5 : i/(network.levels.length - 1)
-            );
+                network.levels.length == 0 ? 0.5 : i/(network.levels.length - 1));
 
             ctx.setLineDash([7, 3]);
             Visualizer.drawLevel(ctx, 
@@ -23,7 +21,7 @@ class Visualizer {
                                  levelTop, 
                                  width, 
                                  levelHeight, 
-                                 i == network.levels.length - 1? ['🠉','🠈','🠊','🠋']: []);
+                                 i == network.levels.length - 1? ['🠉','🠈','🠊','🠋']: []); //allocates the signs to the topmost layer of the neural network
         }
     }
 
@@ -32,7 +30,7 @@ class Visualizer {
         const right = left + width;
         const bottom = top + height;
 
-        const {inputs, outputs, weights, biases} = level; //improves readability, works same as level.inputs.length
+        const {inputs, outputs, weights, biases} = level; //improves readability, works same as level.inputs.length, level.outputs.length, etc.
         //Drawing input neurons
         const nodeRadius = 18;
 
@@ -53,10 +51,10 @@ class Visualizer {
                 ctx.stroke();
             }
         }
-        
+
+        //Drawing the input nodes in the bottom
         for(let i = 0; i < inputs.length; i++) {
             const x = Visualizer.#getNodeX(inputs, i, left, right); //x-coordinate
-            //If there is only node, it is centered (0.5). Otherwise, they're all spaced out
             
             ctx.beginPath();
             ctx.arc(x, bottom, nodeRadius, 0, Math.PI*2)
@@ -69,11 +67,10 @@ class Visualizer {
             ctx.fill();
         }
 
+        //Drawing the output nodes
         for(let i = 0; i < outputs.length; i++) {
             const x = Visualizer.#getNodeX(outputs, i, left, right); //x-coordinate
-            //If there is only node, it is centered (0.5). Otherwise, they're all spaced out
             
-            //If there
             ctx.beginPath();
             ctx.arc(x, top, nodeRadius, 0, Math.PI*2)
             ctx.fillStyle = "black";
@@ -105,11 +102,11 @@ class Visualizer {
         }
     }
 
-    static #getNodeX(nodes, index, left, right) {
+    static #getNodeX(nodes, index, left, right) { //helper function that calculates the x-coordinate of nodes
         return lerp(
             left, 
             right,
             nodes.length == 1?0.5:index/(nodes.length - 1)
-        );
+        ); //If there is only node, it is centered (0.5). Otherwise, they're all spaced out
     }
 }
